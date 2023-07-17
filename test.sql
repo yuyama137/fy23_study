@@ -32,3 +32,23 @@ FROM a
 WHERE sales_ymd BETWEEN DATE('2018-01-01') AND DATE('2018-12-31') --""で括るとカラム名として認識されてしまってダメです。
 group by sales_ymd
 order by sales_ymd;
+
+-- 月次集計
+with data_with_month AS ( 
+  SELECT
+      year(date_parse(sales_ymd, '%Y%m%d')) AS sales_year,
+      month(date_parse(sales_ymd, '%Y%m%d')) AS sales_month,
+      amount
+  FROM yamamura_database_test.receipt
+)
+SELECT 
+    sales_year,
+    sales_month,
+    sum(amount) AS total
+FROM data_with_month
+GROUP BY sales_year,sales_month
+ORDER BY sales_year,sales_month;
+
+
+-- LIKEの対象をカラム名にしたい時
+-- https://choo.hatenablog.jp/entry/20090723/1248450733
